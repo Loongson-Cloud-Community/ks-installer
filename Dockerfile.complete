@@ -1,15 +1,17 @@
-FROM golang:1.16-alpine3.14
+FROM cr.loongnix.cn/library/golang:1.19-alpine
 
 ARG appVersion=latest
 
 RUN apk --no-cache add git ca-certificates && \
-    git clone --branch v1.0.0-beta.5 https://github.com/flant/shell-operator.git /go/src/github.com/flant/shell-operator
+    git clone --branch loong64-v1.0.0-beta.5 https://github.com/Loongson-Cloud-Community/shell-operator.git /go/src/github.com/Loongson-Cloud-Community/shell-operator
 
-RUN go get -d github.com/flant/shell-operator/...
+RUN go get -d github.com/Loongson-Cloud-Community/shell-operator/...
 
-WORKDIR /go/src/github.com/flant/shell-operator
+WORKDIR /go/src/github.com/Loongson-Cloud-Community/shell-operator
 
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X 'github.com/flant/shell-operator/pkg/app.Version=$appVersion'" -o shell-operator ./cmd/shell-operator
+RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -ldflags="-s -w -X 'github.com/Loongson-Cloud-Community/shell-operator/pkg/app.Version=$appVersion'" -o shell-operator ./cmd/shell-operator
+
+RUN exit 1
 
 
 FROM python:3.9.7-alpine3.14
